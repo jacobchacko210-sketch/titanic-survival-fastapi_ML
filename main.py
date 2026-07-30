@@ -5,7 +5,7 @@ from pydantic import BaseModel, Field
 from typing import Literal
 from fastapi.middleware.cors import CORSMiddleware
 
-model = joblib.load('titanic_logistic_model.pkl')
+model = joblib.load('titanic_model.pkl')
 
 app = FastAPI()
 
