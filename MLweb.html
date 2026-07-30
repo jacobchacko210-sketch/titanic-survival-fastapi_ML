@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Titanic Survival Predictor</title>
+    <style>
+        /* CSS Reset for a fresh start */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            /* Clean background gradient to make the glass blur visible */
+            background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #ffffff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        h1 {
+            margin-bottom: 30px;
+            font-weight: 300;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            text-align: center;
+        }
+
+        /* Glass Morphism Container (The Form) */
+        #predictionForm {
+            /* Standard Glass Morphism Rules */
+            background: rgba(255, 255, 255, 0.05); /* Transparent background */
+            backdrop-filter: blur(12px);            /* Background blur */
+            -webkit-backdrop-filter: blur(12px);    /* Blur Safari support */
+            border: 1px solid rgba(255, 255, 255, 0.1); /* Subtle "frost" border */
+            
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37); /* Drop shadow for depth */
+            
+            width: 100%;
+            max-width: 450px;
+            margin-bottom: 20px;
+            transition: transform 0.3s ease;
+        }
+
+        #predictionForm:hover {
+            transform: translateY(-5px); /* Gentle hover animation */
+        }
+
+        /* Modernize input/select groupings without changing HTML structure */
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+            color: rgba(255,255,255,0.7);
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px 15px;
+            margin-bottom: 20px; /* Replaces necessity of <br> visually */
+            
+            background: rgba(0, 0, 0, 0.2); /* Darker internal look */
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: #ffffff;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        /* Styling the dropdown indicator color */
+        select {
+            appearance: none;
+            -webkit-appearance: none;
+            background-image: url("data:image/svg+xml;utf8,<svg fill='white' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/><path d='M0 0h24v24H0z' fill='none'/></svg>");
+            background-repeat: no-repeat;
+            background-position-x: 96%;
+            background-position-y: 12px;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #00c6ff; /* Cyan accent on focus */
+            background: rgba(0, 0, 0, 0.3);
+            box-shadow: 0 0 10px rgba(0, 198, 255, 0.5);
+        }
+
+        /* Hide the ugly <br> tags in modern UI */
+        form br {
+            display: none;
+        }
+
+        /* Stylish Action Button */
+        button[type="submit"] {
+            width: 100%;
+            padding: 15px;
+            margin-top: 10px;
+            
+            background: linear-gradient(135deg, #00c6ff 0%, #0072ff 100%);
+            border: none;
+            border-radius: 8px;
+            
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 114, 255, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        button[type="submit"]:hover {
+            background: linear-gradient(135deg, #0072ff 0%, #00c6ff 100%);
+            box-shadow: 0 6px 20px rgba(0, 114, 255, 0.6);
+            transform: scale(1.02);
+        }
+
+        /* Result Section - Also Glass Morphism */
+        #result {
+            padding: 25px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            
+            display: none; /* Controlled by JS */
+            width: 100%;
+            max-width: 450px;
+            text-align: center;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            
+            animation: fadeIn 0.5s ease;
+        }
+
+        #result h2 {
+            margin-bottom: 15px;
+            font-weight: 300;
+            color: rgba(255,255,255,0.9);
+        }
+
+        #result p {
+            font-size: 18px;
+            margin-bottom: 10px;
+            color: rgba(255,255,255,0.8);
+        }
+
+        /* Simple animation for result showing */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <h1>Titanic Survival Predictor</h1>
+    <form id="predictionForm">
+        <label for="Pclass">Pclass:</label>
+        <input type="number" id="Pclass" name="Pclass" min="1" max="3" required><br>
+
+        <label for="Sex">Sex:</label>
+        <select id="Sex" name="Sex" required>
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+        </select><br>
+
+        <label for="Age">Age:</label>
+        <input type="number" id="Age" name="Age" step="0.1" required><br>
+
+        <label for="SibSp">SibSp:</label>
+        <input type="number" id="SibSp" name="SibSp" min="0" required><br>
+
+        <label for="Parch">Parch:</label>
+        <input type="number" id="Parch" name="Parch" min="0" required><br>
+
+        <label for="Fare">Fare:</label>
+        <input type="number" id="Fare" name="Fare" step="0.01" min="0" required><br><br>
+
+        <button type="submit">Predict Survival</button>
+    </form>
+
+    <div id="result"></div>
+
+    <script>
+        document.getElementById('predictionForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const formData = new FormData(e.target);
+            
+            // Explicitly parse the values to match the expected numeric types in Python
+            const data = {
+                Pclass: parseInt(formData.get('Pclass')),
+                Sex: formData.get('Sex'),
+                Age: parseFloat(formData.get('Age')),
+                SibSp: parseInt(formData.get('SibSp')),
+                Parch: parseInt(formData.get('Parch')),
+                Fare: parseFloat(formData.get('Fare'))
+            };
+
+            // Point fetch to the /predict endpoint
+            const response = await fetch('/predict', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+
+            const result = await response.json();
+            
+            // Display the results neatly
+            const resultDiv = document.getElementById('result');
+            resultDiv.style.display = 'block';
+            resultDiv.innerHTML = `
+                <h2>Prediction Result</h2>
+                <p><strong>Outcome:</strong> ${result.prediction === 1 ? "Survived" : "Did not survive"}</p>
+                <p><strong>Probability:</strong> ${(result.probability * 100).toFixed(2)}%</p>
+            `;
+        });
+    </script>
+</body>
+</html>
