@@ -23,7 +23,7 @@ class PassengerData(BaseModel):
 @app.get("/", response_class=HTMLResponse)
 def serve_home():
     current_dir = os.path.dirname(os.path.abspath(__file__))
-    html_file_path = os.path.join(current_dir, "MLweb.html")
+    html_file_path = os.path.join(current_dir, "index.html")
     
     with open(html_file_path, "r") as f:
         return f.read()
